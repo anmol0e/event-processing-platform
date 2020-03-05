@@ -1,0 +1,19 @@
+jobName: RewardPoint
+
+sparkConfig:
+  spark.speculation: true
+  spark.speculation.interval: 600s
+  spark.master: local[2]
+
+source:
+  type: file                  # can support http, ftp, hdfs, kafka in future
+  format: csv                 # can support json, tsv or any custom format in future
+  paths:
+    - /tmp/0
+    - /tmp/0
+
+sink:
+  type: file                  # can support http, ftp, hdfs, kafka in future
+  format: csv                 # can support json, tsv or any custom format in future
+  paths:
+    - /tmp/1
