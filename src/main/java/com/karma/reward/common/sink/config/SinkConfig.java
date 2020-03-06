@@ -1,4 +1,4 @@
-package com.karma.reward.common.config.sink;
+package com.karma.reward.common.sink.config;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -11,5 +11,5 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
 		@JsonSubTypes.Type(name = "file", value = SinkFileConfig.class)
 })
-public interface Sink {
+public interface SinkConfig {
 }

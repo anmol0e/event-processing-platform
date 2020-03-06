@@ -2,7 +2,7 @@ package com.karma.reward.common.config;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.karma.reward.common.config.source.Source;
+import com.karma.reward.common.source.config.SourceConfig;
 
 import java.util.Map;
 
@@ -10,17 +10,17 @@ public abstract class AppConfig {
 
 	private final String jobName;
 	private final Map<String, String> sparkConfig;
-	private final Source source;
+	private final SourceConfig sourceConfig;
 
 	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
 	public AppConfig(
 			@JsonProperty(value = "jobName", required = true) String jobName,
-			@JsonProperty(value = "sparkConfig", required = false) Map<String, String> sparkConfig,
-			@JsonProperty(value = "source", required = true) Source source
+			@JsonProperty(value = "spark", required = false) Map<String, String> sparkConfig,
+			@JsonProperty(value = "source", required = true) SourceConfig sourceConfig
 	) {
 		this.jobName = jobName;
 		this.sparkConfig = sparkConfig;
-		this.source = source;
+		this.sourceConfig = sourceConfig;
 	}
 
 	public String getJobName() {
@@ -31,7 +31,7 @@ public abstract class AppConfig {
 		return sparkConfig;
 	}
 
-	public Source getSource() {
-		return source;
+	public SourceConfig getSourceConfig() {
+		return sourceConfig;
 	}
 }

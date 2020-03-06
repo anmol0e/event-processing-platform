@@ -3,23 +3,27 @@ package com.karma.reward.rewardpoint;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.karma.reward.common.config.AppConfig;
-import com.karma.reward.common.config.sink.Sink;
-import com.karma.reward.common.config.source.Source;
+import com.karma.reward.common.sink.config.SinkConfig;
+import com.karma.reward.common.source.config.SourceConfig;
 
 import java.util.Map;
 
 public class RewardPointConfig extends AppConfig {
 
-	private final Sink sink;
+	private final SinkConfig sinkConfig;
 
 	@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
 	public RewardPointConfig(
 			@JsonProperty(value = "jobName", required = true) String jobName,
-			@JsonProperty(value = "sparkConfig", required = false) Map<String, String> sparkConfig,
-			@JsonProperty(value = "source", required = true) Source source,
-			@JsonProperty(value = "sink", required = true) Sink sink
+			@JsonProperty(value = "spark", required = false) Map<String, String> sparkConfig,
+			@JsonProperty(value = "source", required = true) SourceConfig sourceConfig,
+			@JsonProperty(value = "sink", required = true) SinkConfig sinkConfig
 	) {
-		super(jobName, sparkConfig, source);
-		this.sink = sink;
+		super(jobName, sparkConfig, sourceConfig);
+		this.sinkConfig = sinkConfig;
+	}
+
+	public SinkConfig getSinkConfig() {
+		return sinkConfig;
 	}
 }

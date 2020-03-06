@@ -1,18 +1,31 @@
 jobName: RewardPoint
 
-sparkConfig:
+spark:
   spark.speculation: true
   spark.speculation.interval: 600s
-  spark.master: local[2]
+  spark.master: local[4]
+  #spark.ui.enabled: false
 
 source:
-  type: file                  # can support http, ftp, hdfs, kafka in future
-  format: csv                 # can support json, tsv or any custom format in future
+  type: file                  # We may support in future other types like http, ftp, hdfs or kafka
+  codec:                      # We may support other codecs in future like json, tsv or any custom codec
+    type: csv
+    schema:                                     # Spark can infer schema automatically but it will require going throug
+      - [transactionId, String]                 # whole data once, hence better to provide schema by ourselves
+      - [customerId, String]
+      - [customerName, String]
+      - [bankName, String]
+      - [transactionAmount(EUR), Double]
+      - [merchantName, String]
+      - [merchantType, String]
+      - [transactionCountry, String]
+      - [transactionType, String]
   paths:
     - /tmp/0
 
 sink:
-  type: file                  # can support http, ftp, hdfs, kafka in future
-  format: csv                 # can support json, tsv or any custom format in future
+  type: file                  # We may support in future other types like http, ftp, hdfs or kafka
+  codec:                      # We may support other codecs in future like json, tsv or any custom codec
+    type: json
   paths:
     - /tmp/1

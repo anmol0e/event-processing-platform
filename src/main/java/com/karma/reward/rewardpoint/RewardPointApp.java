@@ -2,45 +2,52 @@ package com.karma.reward.rewardpoint;
 
 import com.karma.reward.common.App;
 import com.karma.reward.common.ObjectMapperProvider;
+import com.karma.reward.common.sink.Sink;
+import com.karma.reward.common.sink.SinkProvider;
+import com.karma.reward.rewardpoint.dataobject.Transaction;
 import org.apache.spark.rdd.RDD;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 public class RewardPointApp extends App<RewardPointConfig> {
 
 	private static Logger logger = Logger.getLogger(RewardPointApp.class.getCanonicalName());
 
-	private final RewardPointConfig config;
+	private final Sink sink;
 
-	private RewardPointApp(RewardPointConfig config) {
+	private RewardPointApp(RewardPointConfig config) throws Exception {
 		super(config);
-		this.config = config;
+		sink = SinkProvider.getSink(config.getSinkConfig());
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		if (args.length < 1) {
 			logger.log(Level.SEVERE, "Application requires configuration file");
 		}
 		RewardPointConfig config =
-				ObjectMapperProvider.getObjectMapper().readValue(
+				ObjectMapperProvider.getYAMLObjectMapper().readValue(
 						new FileInputStream(new File(args[0])),
 						RewardPointConfig.class
 				);
-		new RewardPointApp(config).execute();
+		new RewardPointApp(config).run();
 	}
 
 	@Override
-	public void execute() {
-		Optional<RDD<String>> rddOptional = config.getSource().getResource().apply(sc);
+	public void shutdown() throws Exception {
+		super.shutdown();
+		sink.shutdown();
+	}
+
+	@Override
+	public void execute() throws Exception {
+		Optional<RDD<Transaction>> rddOptional = source.read(Transaction.class).apply(sc);
 		if (!rddOptional.isPresent()) {
 			throw new RuntimeException("Empty RDD");
 		}
+		sink.write().accept(rddOptional.get());
 	}
 }
