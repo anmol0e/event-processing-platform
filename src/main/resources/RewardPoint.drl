@@ -1,0 +1,45 @@
+package com.karma.reward.rewardpoint.dataobject;
+
+import com.karma.reward.rewardpoint.dataobject.Transaction;
+
+function Double getRewardPoints(Double transactionAmount, String transactionType) {
+    Boolean isTransactionAmountPositive = true;
+    if (transactionAmount < 0) {
+        transactionAmount *= -1;
+        isTransactionAmountPositive = false;
+    }
+    Double rewardPoints = 0.0;
+    if (transactionAmount < 2.50) {
+        rewardPoints = (transactionType.equalsIgnoreCase("ECOM") ? 0.0 : 1.0);
+    } else if (transactionAmount < 5.00) {
+        rewardPoints = (transactionType.equalsIgnoreCase("ECOM") ? 1.0 : 2.0);
+    } else if (transactionAmount < 10.00) {
+        rewardPoints = (transactionType.equalsIgnoreCase("ECOM") ? 2.0 : 3.0);
+    } else if (transactionAmount < 100.00) {
+        rewardPoints = (transactionType.equalsIgnoreCase("ECOM") ? 3.0 : 4.0);
+    } else if (transactionAmount < 300.00) {
+        rewardPoints = (transactionType.equalsIgnoreCase("ECOM") ? 0.07 * transactionAmount : 0.09 * transactionAmount);
+    } else if (transactionAmount < 1000.00) {
+        rewardPoints = (transactionType.equalsIgnoreCase("ECOM") ? 0.10 * transactionAmount : 0.11 * transactionAmount);
+    } else {
+        rewardPoints = (transactionType.equalsIgnoreCase("ECOM") ? 0.15 * transactionAmount : 0.13 * transactionAmount);
+    }
+    return isTransactionAmountPositive ? rewardPoints : -1 * rewardPoints;
+}
+
+rule "Calculate reward point on amount"
+    salience 0
+    when
+        $transaction: Transaction()
+    then
+        $transaction.setRewardPoints(getRewardPoints($transaction.getTransactionAmount(), $transaction.getTransactionType()));
+end
+
+rule "Increase or decrease reward point for merchant type"
+    salience -1
+    when
+        $transaction: Transaction(merchantType.equalsIgnoreCase("airlines"))
+    then
+        $transaction.setRewardPoints($transaction.getRewardPoints() * 2);
+end
+
