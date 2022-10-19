@@ -11,7 +11,7 @@
     <properties>
         <plugin.compiler.source>1.8</plugin.compiler.source>
         <plugin.compiler.target>1.8</plugin.compiler.target>
-        <jackson.version>2.11.1</jackson.version>
+        <jackson.version>2.13.4.1</jackson.version>
         <spark.version>2.4.5</spark.version>
         <drolls.version>7.33.0.Final</drolls.version>
     </properties>
